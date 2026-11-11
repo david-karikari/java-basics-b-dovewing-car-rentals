@@ -1,77 +1,81 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 class Depot {
-    public String name;
-    public List<Vehicle> vehicles = new ArrayList<>();
-    public List<Renter> renters = new ArrayList<>();
-    private List<Rental> rentals = new ArrayList<>();
+    private final String name;
+    private final List<Vehicle> vehicles = new ArrayList<>();
+    private final List<Renter> renters = new ArrayList<>();
+    private final List<Rental> history = new ArrayList<>();
 
     public Depot(String name) {
-        this.name = name;
+        this.name = Objects.requireNonNull(name);
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public List<Renter> renters() { return Collections.unmodifiableList(renters); }
+
+    /** These are read-only and hence cannot be edited outside this class by any other code */
+    public List<Vehicle> vehicles() {
+        return Collections.unmodifiableList(vehicles);
+    }
+    public List<Rental> rentalHistory() {
+        return Collections.unmodifiableList(history);
     }
 
     public void addVehicle(Vehicle v) {
+        Objects.requireNonNull(v);
+
+        for (Vehicle existing : vehicles) {
+            if (existing.reg().equals(v.reg())) {
+                throw new IllegalArgumentException("Duplicate registration numbers. Vehicle with registration ( " + v.reg() + " ) already exists.");
+            }
+        }
+
         vehicles.add(v);
     }
 
     public void addRenter(Renter r) {
-        renters.add(r);
+        renters.add(Objects.requireNonNull(r));
     }
 
-    // Rent a vehicle to a renter for a number of days. The rules depend on the class of vehicle.
-    public void rent(Renter r, Vehicle v, int days) {
-        double cost = 0, deposit = 0;
-        if (v.category.equals("ECONOMY")) {
-            cost = v.dailyRate * days;
-            deposit = v.deposit;
-            if (r.kind.equals("MEMBER")) {
-                deposit = 0; // members have their deposit waived
-            }
-            v.status = "RENTED";
-            System.out.println("Rented " + v.model + " (" + v.reg + ") to " + r.name
-                    + " for " + days + " days, cost GHS " + cost + ", deposit GHS " + deposit);
-        } else if (v.category.equals("PREMIUM")) {
-            cost = v.dailyRate * days;
-            deposit = v.deposit;
-            if (r.kind.equals("MEMBER")) {
-                deposit = 0; // members have their deposit waived
-            }
-            v.status = "RENTED";
-            System.out.println("Rented " + v.model + " (" + v.reg + ") to " + r.name
-                    + " for " + days + " days, cost GHS " + cost + ", deposit GHS " + deposit);
-        }
-        r.history.add("Rented " + v.model);
-        rentals.add(new Rental(r.name, v.reg, days, cost, deposit));
+    /** Rent a vehicle to a renter for a number of days. The rules depend on the class of vehicle. */
+    public Rental rent(Renter renter, Vehicle vehicle, int days) {
+       Objects.requireNonNull(renter);
+       Objects.requireNonNull(vehicle);
+
+        /** The vehicle class supplies the price and deposit rules. */
+       VehicleClass vc = vehicle.vehicleClass();
+       double cost = vc.dailyRate() * days;
+       double deposit = vc.deposit(renter.type(), days);
+       Rental rental = new Rental(history.size() + 1, renter, vehicle, days, cost, deposit);
+
+        vehicle.markRented(rental); // throws an exception if the car is not available
+
+        renter.recordRental(vehicle.model());
+       history.add(rental); // only reached if the rent succeeded
+
+       return rental;
     }
 
-    public void returnVehicle(Vehicle v) {
-        v.status = "AVAILABLE";
-        for (Rental rt : rentals) {
-            if (rt.vehicleReg.equals(v.reg) && rt.status.equals("ACTIVE")) {
-                rt.status = "RETURNED";
-            }
-        }
-        System.out.println("Returned " + v.model + " (" + v.reg + ")");
+    /** Returns a car. Throws if the car is not out. */
+    public Rental returnVehicle(Vehicle vehicle) {
+        return vehicle.markReturned();
     }
 
-    public List<Rental> getRentals() {
-        return rentals;
-    }
 
-    public void printReport() {
-        System.out.println();
-        System.out.println("=== " + name + " - end of day ===");
-        System.out.println("Fleet status:");
-        for (Vehicle v : vehicles) {
-            System.out.println("  " + v.model + " (" + v.reg + ", " + v.category + "): " + v.status);
-        }
-        System.out.println("Active rentals:");
-        for (Rental rt : rentals) {
-            if (rt.status.equals("ACTIVE")) {
-                System.out.println("  Rental #" + rt.id + ": " + rt.vehicleReg + " -> " + rt.renterName
-                        + " (" + rt.days + " days)");
-            }
-        }
+    /** Rentals currently out, taken from the cars' status. */
+    public List<Rental> activeRentals() {
+       List<Rental> active = new ArrayList<>();
+
+       for (Vehicle v : vehicles) {
+           if (v.status() instanceof VehicleStatus.Rented(Rental rental)) {
+               active.add(rental);
+           }
+       }
+       active.sort(Comparator.comparingInt(Rental::id)); // same order as before
+
+       return active;
     }
 }

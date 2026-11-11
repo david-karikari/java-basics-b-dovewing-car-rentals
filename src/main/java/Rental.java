@@ -1,21 +1,5 @@
-class Rental {
-    public int id;
-    public String renterName;
-    public String vehicleReg;
-    public int days;
-    public double cost;
-    public double deposit;
-    public String status; // "ACTIVE" or "RETURNED"
-    static int counter = 1;
-
-    public Rental(String renterName, String vehicleReg, int days, double cost, double deposit) {
-        this.id = counter;
-        counter++;
-        this.renterName = renterName;
-        this.vehicleReg = vehicleReg;
-        this.days = days;
-        this.cost = cost;
-        this.deposit = deposit;
-        this.status = "ACTIVE";
-    }
-}
+/**
+ * One rental. A record, so it cannot change after it is made.
+ * It points to the real renter and car, not copies of their names.
+ */
+public record Rental (int id,  Renter renter, Vehicle vehicle, int days, double cost, double deposit) {}
