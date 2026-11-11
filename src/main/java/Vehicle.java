@@ -42,7 +42,7 @@ public final class Vehicle {
     /** The only way to rent this car. Rejects it if it is already out. */
   public void markRented(Rental rental) {
       if(!isAvailable()) {
-          throw new IllegalStateException(model + " ( " + reg + " ) is already rented." );
+          throw new IllegalStateException(model + " (" + reg + ") is already rented" );
       }
 
       status = new VehicleStatus.Rented(rental);
@@ -56,7 +56,7 @@ public final class Vehicle {
           return rental;
       }
 
-      throw new IllegalStateException(model + " ( " + reg + " ) is not rented.");
+      throw new IllegalStateException(model + " (" + reg + ") is not rented");
   }
 
     /** Text for reports. No default branch, so a new status forces an update here. */
