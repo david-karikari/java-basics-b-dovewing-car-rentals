@@ -31,6 +31,13 @@ java -cp target/classes RentalTracker
 Run it first, before you change anything, so you can see how it currently
 behaves. Look carefully at the end-of-day report.
 
+### Original behaviour (baseline)
+
+The output of the unmodified starter program is saved in
+[`docs/initial-output.txt`](docs/initial-output.txt). The rebuilt version must
+produce the same output, except for the one intended change: a vehicle can no
+longer be rented while it is already out.
+
 ## What to hand in
 
 See the lab brief for the full list: a written diagnosis, your rebuilt version
