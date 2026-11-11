@@ -1,3 +1,8 @@
+import com.dovewing.rentals.domain.Rental;
+import com.dovewing.rentals.domain.Renter;
+import com.dovewing.rentals.domain.Vehicle;
+import com.dovewing.rentals.pricing.Economy;
+import com.dovewing.rentals.pricing.RenterType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

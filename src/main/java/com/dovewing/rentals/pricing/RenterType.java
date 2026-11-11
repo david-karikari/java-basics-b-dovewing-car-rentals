@@ -1,3 +1,5 @@
+package com.dovewing.rentals.pricing;
+
 /**
  * The kinds of renter Dovewing has.
  * Each type knows whether its deposit is waived, so the rule lives

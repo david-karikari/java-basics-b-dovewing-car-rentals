@@ -1,3 +1,5 @@
+package com.dovewing.rentals.pricing;
+
 /**
  * The rules for one class of vehicle (economy, premium, and later vans).
  * Each class decides its own daily rate and deposit. To add a new class,

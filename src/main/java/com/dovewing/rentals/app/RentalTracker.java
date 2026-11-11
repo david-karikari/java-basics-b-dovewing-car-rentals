@@ -1,3 +1,12 @@
+package com.dovewing.rentals.app;
+
+import com.dovewing.rentals.domain.Depot;
+import com.dovewing.rentals.domain.Renter;
+import com.dovewing.rentals.domain.Vehicle;
+import com.dovewing.rentals.pricing.Economy;
+import com.dovewing.rentals.pricing.Premium;
+import com.dovewing.rentals.pricing.RenterType;
+
 /** The demo: a normal day, plus the double rental the old program allowed. */
 
 public class RentalTracker {

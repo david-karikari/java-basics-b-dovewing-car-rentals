@@ -8,5 +8,5 @@ Fleet status:
   Toyota Vitz (GT-1234-20, ECONOMY): RENTED
   Toyota Prado (GR-5678-22, PREMIUM): AVAILABLE
 Active rentals:
-  Rental #1: GT-1234-20 -> Kofi Mensah (3 days)
-  Rental #3: GT-1234-20 -> Ama Owusu (2 days)
+  com.dovewing.rentals.domain.Rental #1: GT-1234-20 -> Kofi Mensah (3 days)
+  com.dovewing.rentals.domain.Rental #3: GT-1234-20 -> Ama Owusu (2 days)

@@ -1,3 +1,7 @@
+package com.dovewing.rentals.domain;
+
+import com.dovewing.rentals.pricing.VehicleClass;
+
 import java.util.Objects;
 
 /**

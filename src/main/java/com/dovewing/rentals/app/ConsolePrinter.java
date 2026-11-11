@@ -1,3 +1,9 @@
+package com.dovewing.rentals.app;
+
+import com.dovewing.rentals.domain.Depot;
+import com.dovewing.rentals.domain.Rental;
+import com.dovewing.rentals.domain.Vehicle;
+
 /** All printing lives here, so the rules can be used without a console. */
 
 public class ConsolePrinter {
@@ -21,7 +27,7 @@ public class ConsolePrinter {
         }
         System.out.println("Active rentals:");
         for (Rental r : depot.activeRentals()) {
-            System.out.println("  Rental #" + r.id() + ": " + r.vehicle().reg() + " -> "
+            System.out.println("  com.dovewing.rentals.domain.Rental #" + r.id() + ": " + r.vehicle().reg() + " -> "
                     + r.renter().name() + " (" + r.days() + " days)");
         }
     }

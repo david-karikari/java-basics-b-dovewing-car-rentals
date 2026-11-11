@@ -23,7 +23,7 @@ I think this is the worst problem for Dovewing, for four reasons:
 
 The owner said the one rule that must never be broken is that a car is either available or rented, never both. This problem breaks exactly that rule, so it comes first.
 
-**Why it happens:** the program keeps the same fact in two places. `Vehicle.status` is a plain text value, and the list of rentals also says whether a car is out. Nothing links the two, and `rent()` never checks the current status before renting.
+**Why it happens:** the program keeps the same fact in two places. `com.dovewing.rentals.domain.Vehicle` is a plain text value, and the list of rentals also says whether a car is out. Nothing links the two, and `rent()` never checks the current status before renting.
 
 ## 3. Other problems
 
@@ -118,7 +118,7 @@ The depot is adding a commercial-van class next quarter with its own deposit rul
 The plan, which may change while I build (I will explain any change in the README):
 
 - **One status value.** A car's status is either `Available` or `Rented`, and only `Rented` carries the rental. A car cannot be both.
-- **The vehicle class owns its rules.** Economy and premium each provide their own daily rate and deposit behind one shared type. A new class becomes one new type instead of changes to `rent()`.
+- **The vehicle class owns its rules.** com.dovewing.rentals.pricing.Economy and premium each provide their own daily rate and deposit behind one shared type. A new class becomes one new type instead of changes to `rent()`.
 - **The renter type owns the waiver.** Whether a deposit is waived belongs to the renter type (casual or member), separate from the vehicle rules.
 - **The car guards its own status.** Renting a rented car and returning an available car are both rejected, so the rule holds no matter who calls it.
 - **Enums and sealed types instead of text** for every fixed set of choices.

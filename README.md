@@ -10,14 +10,14 @@ You need JDK 21. There are no other dependencies.
 
 ```bash
 mvn compile
-mvn exec:java -Dexec.mainClass=RentalTracker
+mvn exec:java -Dexec.mainClass=com.dovewing.rentals.app.RentalTracker
 ```
 
-**Or directly with the JDK (macOS, Linux or Git Bash):**
+**Or directly with the JDK:**
 
 ```bash
-javac -d target/classes src/main/java/*.java
-java -cp target/classes RentalTracker
+javac -d target/classes -sourcepath src/main/java src/main/java/com/dovewing/rentals/app/RentalTracker.java
+java -cp target/classes com.dovewing.rentals.app.RentalTracker
 ```
 
 The program runs a short demo: it rents two cars, returns one, tries to rent the first car a second time, and prints an end-of-day report.
@@ -30,20 +30,30 @@ mvn test
 
 ## How the code is organised
 
-All files are in `src/main/java`, one class per file.
+The code is split into three packages under `src/main/java/com/dovewing/rentals`, one class per file.
 
-| File | What it does |
-|---|---|
-| `RentalTracker` | The demo. Sets up the depot and runs a normal day. |
-| `Depot` | Holds the fleet, the renters and the rental history. Handles renting and returning. |
-| `Vehicle` | A car. Owns its status and refuses any change that would make it invalid. |
-| `VehicleStatus` | Sealed type with two values: `Available` and `Rented` (which carries the rental). |
-| `VehicleClass` | Interface for the rules of a vehicle class: daily rate and deposit. |
-| `Economy`, `Premium` | The two current vehicle classes. |
-| `Renter` | A customer, with a name, a type and a rental history. |
-| `RenterType` | Enum: `CASUAL` or `MEMBER`. Knows whether the deposit is waived. |
-| `Rental` | An immutable record of one rental. |
-| `ConsolePrinter` | All the printing, kept apart from the rules. |
+```
+pricing/   the rules the owner might change
+domain/    the cars, renters and rentals, and the rule that keeps status valid
+app/       the demo and the printing
+```
+
+Dependencies only go one way: `app` uses `domain`, and `domain` uses `pricing`. `pricing` depends on nothing else.
+
+| Package | File | What it does |
+|---|---|---|
+| `pricing` | `VehicleClass` | Interface for the rules of a vehicle class: daily rate and deposit. |
+| `pricing` | `Economy`, `Premium` | The two current vehicle classes. |
+| `pricing` | `RenterType` | Enum: `CASUAL` or `MEMBER`. Knows whether the deposit is waived. |
+| `domain` | `Vehicle` | A car. Owns its status and refuses any change that would make it invalid. |
+| `domain` | `VehicleStatus` | Sealed type with two values: `Available` and `Rented` (which carries the rental). |
+| `domain` | `Renter` | A customer, with a name, a type and a rental history. |
+| `domain` | `Rental` | An immutable record of one rental. |
+| `domain` | `Depot` | Holds the fleet, the renters and the rental history. Handles renting and returning. |
+| `app` | `RentalTracker` | The demo. Sets up the depot and runs a normal day. |
+| `app` | `ConsolePrinter` | All the printing, kept apart from the rules. |
+
+The tests are in `src/test/java`, in the matching packages.
 
 ## Design notes
 
@@ -90,19 +100,28 @@ All fields are private. `Depot` returns read-only views of its lists. A `Rental`
 
 The old `rent()`, `returnVehicle()` and `printReport()` printed their own text. Now the rules return results, and `ConsolePrinter` prints them. The text is identical to the original.
 
-### 8. Two small choices
+### 8. Packages
+
+I grouped the classes by how often they change and who depends on whom. Everything the owner might change (rates, deposits, vehicle classes, renter types) is in `pricing`. The rule that keeps a car's status valid is in `domain`. The demo and the printing are in `app`. I did not split cars and rentals into separate packages, because `Vehicle` holds a `Rental` and a `Rental` points back to its `Vehicle`, which would make two packages depend on each other.
+
+### 9. Two small choices
 
 - **Ids:** I removed the unused ids on `Vehicle` and `Renter` and the static counters. They were never shown or used. Rental ids now come from the size of the rental history, so a rejected rental never uses up a number.
 - **Money:** it is still `double`. Switching to `BigDecimal` would change the printed output (for example `450.00` instead of `450.0`), and the brief asks for the same behaviour. See known limits below.
 
 ## Adding the commercial van
 
-The van needs one new file and nothing else changes:
+The van needs one new file in the `pricing` package, and nothing else changes:
 
 ```java
+package com.dovewing.rentals.pricing;
+
 public record CommercialVan() implements VehicleClass {
-    public String label()           { return "VAN"; }
-    public double dailyRate()       { return 400.00; }   // example numbers
+
+    public String label() { return "VAN"; }
+
+    public double dailyRate() { return 400.00; }          // example numbers
+
     public double standardDeposit() { return 1500.00; }
 
     @Override
@@ -121,7 +140,7 @@ Then a van is created with `new Vehicle("Ford Transit", "GR-9999-26", new Commer
 
 My sketch showed `Rented` carrying the renter. While building I made it carry the whole rental instead. That way the rental itself is the single record of who has the car, for how long and at what price, and the "active rentals" list can be taken straight from the cars with no separate state to keep in sync.
 
-I also added `ConsolePrinter`, which was not in the first sketch. It came from the problem of rules and printing being mixed together (diagnosis 3.3).
+I also added `ConsolePrinter`, which was not in the first sketch. It came from the problem of rules and printing being mixed together (diagnosis 3.3). The three packages were added after the classes worked, and they changed no behaviour.
 
 ## Behaviour compared with the original
 
@@ -151,7 +170,6 @@ There are 15 tests in total. When I first ran the output test it failed because 
 
 - **Money is a `double`.** This is fine for the current numbers, but it could cause rounding problems if discounts or tax are added. The next step would be `BigDecimal` with an agreed output format.
 - **Test coverage is focused, not complete.** The tests cover the status rule, pricing, deposits, rejected rentals and the van plug-in. They do not yet cover every input check, such as null values, or the `Renter` history list on its own.
-- **Default package.** I kept every class in the default package so the run command stays the same as the original.
 
 ## Project documents
 

@@ -1,3 +1,4 @@
+import com.dovewing.rentals.app.RentalTracker;
 import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -29,7 +30,7 @@ class RentalTrackerOutputTest {
                 "  Toyota Vitz (GT-1234-20, ECONOMY): RENTED",
                 "  Toyota Prado (GR-5678-22, PREMIUM): AVAILABLE",
                 "Active rentals:",
-                "  Rental #1: GT-1234-20 -> Kofi Mensah (3 days)",
+                "  com.dovewing.rentals.domain.Rental #1: GT-1234-20 -> Kofi Mensah (3 days)",
                 "");
         assertEquals(expected, actual);
     }

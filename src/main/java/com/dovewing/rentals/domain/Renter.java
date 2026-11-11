@@ -1,6 +1,10 @@
+package com.dovewing.rentals.domain;
+
+import com.dovewing.rentals.pricing.RenterType;
+
 import java.util.*;
 
-/** This is the customer class defined as Renter */
+/** This is the customer class defined as com.dovewing.rentals.domain.Renter */
 public final class Renter {
     private final String name;
 

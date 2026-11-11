@@ -1,3 +1,5 @@
+package com.dovewing.rentals.domain;
+
 /**
  * The status of a vehicle. It is always exactly one of these two values,
  * so a car can never be both available and rented.

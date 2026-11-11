@@ -1,3 +1,5 @@
+package com.dovewing.rentals.pricing;
+
 /** This is for everyday cars. It has Chepaer rates and smaller deposits */
 
 public record Economy() implements VehicleClass {

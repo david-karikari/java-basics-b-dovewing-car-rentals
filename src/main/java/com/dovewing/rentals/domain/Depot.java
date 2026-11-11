@@ -1,6 +1,10 @@
+package com.dovewing.rentals.domain;
+
+import com.dovewing.rentals.pricing.VehicleClass;
+
 import java.util.*;
 
-class Depot {
+public class Depot {
     private final String name;
     private final List<Vehicle> vehicles = new ArrayList<>();
     private final List<Renter> renters = new ArrayList<>();
@@ -29,7 +33,7 @@ class Depot {
 
         for (Vehicle existing : vehicles) {
             if (existing.reg().equals(v.reg())) {
-                throw new IllegalArgumentException("Duplicate registration numbers. Vehicle with registration ( " + v.reg() + " ) already exists.");
+                throw new IllegalArgumentException("Duplicate registration numbers. com.dovewing.rentals.domain.Vehicle with registration ( " + v.reg() + " ) already exists.");
             }
         }
 

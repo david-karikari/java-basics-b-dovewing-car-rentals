@@ -1,3 +1,5 @@
+package com.dovewing.rentals.pricing;
+
 /** This is for premium and luxurious cars. It has ratively expensive rates and larger deposits */
 
 public record Premium() implements VehicleClass {
@@ -7,7 +9,7 @@ public record Premium() implements VehicleClass {
 
 
 
-    /** This is the daily rate for renter going for Premium cars */
+    /** This is the daily rate for renter going for com.dovewing.rentals.pricing.Premium cars */
     public double dailyRate() {
         return 600.00;
     }

@@ -1,3 +1,11 @@
+import com.dovewing.rentals.domain.Depot;
+import com.dovewing.rentals.domain.Rental;
+import com.dovewing.rentals.domain.Renter;
+import com.dovewing.rentals.domain.Vehicle;
+import com.dovewing.rentals.pricing.Economy;
+import com.dovewing.rentals.pricing.Premium;
+import com.dovewing.rentals.pricing.RenterType;
+import com.dovewing.rentals.pricing.VehicleClass;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.List;
@@ -12,7 +20,7 @@ class DepotTest {
 
     @BeforeEach
     void setUp() {
-        depot = new Depot("Test Depot");
+        depot = new Depot("Test com.dovewing.rentals.domain.Depot");
         vitz = new Vehicle("Toyota Vitz", "GT-1234-20", new Economy());
         prado = new Vehicle("Toyota Prado", "GR-5678-22", new Premium());
         kofi = new Renter("Kofi Mensah", RenterType.CASUAL);
